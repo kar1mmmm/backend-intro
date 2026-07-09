@@ -21,4 +21,27 @@ router.get('/:jenjang', async (req, res) => {
     }
 });
 
+router.post('/',async (req, res) => {
+    try{
+        const newData =  req.body;
+        const filePath = path.join(__dirname, '/data/schools.json');
+
+        const fileData = await fs.readFile(filePath, 'utf8');
+        const schoolData = JSON.parse(fileData);
+
+        const newKey = `SEKOLAH_${Date.now()}`;
+        schoolData[newKey] = newData;
+
+        await fs.writeFile(filePath, JSON.stringify(schoolData, null, 4));
+
+
+        res.status(201).json({status : "success", message : "Data berhasil ditambahkan."});
+    } catch (error) {
+        console.log("Detail error post");
+        console.log(error);
+        res.status(500).json({status : "error", message : "gagal menyimpan data."});
+    }
+});
+
+
 module.exports = router;
