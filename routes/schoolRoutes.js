@@ -1,4 +1,5 @@
 const express = require('express');
+const { stat } = require('fs');
 const router = express.Router();
 const fs = require('fs').promises;
 const path = require('path');
@@ -43,5 +44,26 @@ router.post('/',async (req, res) => {
     }
 });
 
+router.delete('/:id', async (req, res) => {
+    try{
+        const id = req.params.id;
+        const filePath = path.join(__dirname, '../schools.json');
+
+        const fileData = await fs.readFile(filePath, 'utf8');
+        const schoolData = JSON.parse(fileData);
+
+        if (schoolData[id]){
+            delete schoolData[id];
+            await fs.writeFile(filePath, JSON.stringify(schoolData, null, 4));
+            res.json({status: "success", message: `Data${id} berhasil dihapus`});
+        } else {
+            res.status(404).json({status: "error", message: "Data tidak ditemukan"});
+        }
+    } catch(error){
+        console.log("DETAIL ERROR DELETE ");
+        console.log(error);
+        res.status(500).json({staus: "error", message: "Gagal menghapus data"});
+    }
+});
 
 module.exports = router;
