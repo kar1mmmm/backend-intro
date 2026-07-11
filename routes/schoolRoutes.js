@@ -60,7 +60,7 @@ router.delete('/:id', async (req, res) => {
             res.status(404).json({status: "error", message: "Data tidak ditemukan"});
         }
     } catch(error){
-        console.log("DETAIL ERROR DELETE ");
+        console.log("=== DETAIL ERROR DELETE ===");
         console.log(error);
         res.status(500).json({staus: "error", message: "Gagal menghapus data"});
     }
