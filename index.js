@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const schoolRoutes = require('./routes/schoolRoutes');
@@ -14,7 +15,7 @@ app.get('/', (req, res) => {
     res.send('API Sekolah v1.0 Aktif');
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server berjalan di http://localhost:${PORT}`);
 });
