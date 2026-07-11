@@ -47,7 +47,7 @@ router.post('/',async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try{
         const id = req.params.id;
-        const filePath = path.join(__dirname, 'data/schools.json');
+        const filePath = path.join(__dirname, '../data/schools.json');
 
         const fileData = await fs.readFile(filePath, 'utf8');
         const schoolData = JSON.parse(fileData);
@@ -62,7 +62,7 @@ router.delete('/:id', async (req, res) => {
     } catch(error){
         console.log("=== DETAIL ERROR DELETE ===");
         console.log(error);
-        res.status(500).json({staus: "error", message: "Gagal menghapus data"});
+        res.status(500).json({status: "error", message: "Gagal menghapus data"});
     }
 });
 
