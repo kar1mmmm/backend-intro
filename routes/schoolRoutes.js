@@ -47,7 +47,7 @@ router.post('/',async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try{
         const id = req.params.id;
-        const filePath = path.join(__dirname, '../schools.json');
+        const filePath = path.join(__dirname, 'data/schools.json');
 
         const fileData = await fs.readFile(filePath, 'utf8');
         const schoolData = JSON.parse(fileData);
