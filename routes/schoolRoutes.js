@@ -10,7 +10,7 @@ const readData = async () => {
     return JSON.parse(data);
 };
 
-router.get('/:jenjang', async (req, res) => {
+router.get('/:jenjang', async (req, res, next) => {
     try {
         const jenjang = req.params.jenjang.toUpperCase();
         const schoolData = await readData();
@@ -21,28 +21,30 @@ router.get('/:jenjang', async (req, res) => {
             res.status(404).json({ status: "error", message: "Jenjang tidak tersedia." });
         }
     } catch (error) {
-        res.status(500).json({ status: "error", message: "Gagal memuat data." });
+        next(error);
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
-        const newData = req.body;
+        const { nama, lokasi } = req.body;
+
+        if (!nama || !lokasi) {
+            return res.status(400).json({ status: "error", message: "Nama dan Lokasi sekolah wajib di isi" });
+        }
+
         const schoolData = await readData();
-
         const newKey = `SEKOLAH_${Date.now()}`;
-        schoolData[newKey] = newData;
-
+        schoolData[newKey] = { nama, lokasi };
+        
         await fs.writeFile(filePath, JSON.stringify(schoolData, null, 4));
-        res.status(201).json({ status: "success", message: "Data berhasil ditambahkan." });
+        res.status(201).json({ status: "Success", message: "Data sekolah berhasil ditambahkan" });
     } catch (error) {
-        console.log("=== DETAIL ERROR POST ===");
-        console.log(error);
-        res.status(500).json({ status: "error", message: "Gagal menyimpan data." });
+        next(error);
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
     try {
         const id = req.params.id.toUpperCase();
         const schoolData = await readData();
@@ -55,9 +57,7 @@ router.delete('/:id', async (req, res) => {
             res.status(404).json({ status: "error", message: "Data tidak ditemukan" });
         }
     } catch (error) {
-        console.log("=== DETAIL ERROR DELETE ===");
-        console.log(error);
-        res.status(500).json({ status: "error", message: "Gagal menghapus data" });
+        next(error);
     }
 });
 

@@ -16,6 +16,13 @@ app.get('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
+app.use((err, req, res, next) => {
+    console.log("=== GLOBAL ERROR ===", err.message);
+    res.status(500).json({
+        status: "error", message: "Terjadi kesalahan pada internal server" });
+});
+
 app.listen(PORT, () => {
     console.log(`Server berjalan di http://localhost:${PORT}`);
 });

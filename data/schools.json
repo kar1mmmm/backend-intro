@@ -1,5 +1,18 @@
 {
-    "SMA": { "nama": "SMA 1 SULIKI", "lokasi": "Limbanang" },
-    "SMP": { "nama": "MTSN 1 LIMA PULUH KOTA", "lokasi": "Padang Japang" },
-    "SD": { "nama": "SDN 05 VII KOTO TALAGO", "lokasi": "Koto kociak" }
+    "SMA": {
+        "nama": "SMA 1 SULIKI",
+        "lokasi": "Limbanang"
+    },
+    "SMP": {
+        "nama": "MTSN 1 LIMA PULUH KOTA",
+        "lokasi": "Padang Japang"
+    },
+    "SD": {
+        "nama": "SDN 05 VII KOTO TALAGO",
+        "lokasi": "Koto kociak"
+    },
+    "SEKOLAH_1783945227594": {
+        "nama": "SMK 1 Guguak",
+        "lokasi": "Dangung-Dangung"
+    }
 }
