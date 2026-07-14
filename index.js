@@ -17,10 +17,10 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
+// Middleware Global Error Handler di index.js
 app.use((err, req, res, next) => {
-    console.log("=== GLOBAL ERROR ===", err.message);
-    res.status(500).json({
-        status: "error", message: "Terjadi kesalahan pada internal server" });
+    console.error("=== GLOBAL ERROR ===", err);
+    res.status(500).json({ status: "error", message: "Terjadi kesalahan pada internal server" });
 });
 
 app.listen(PORT, () => {
