@@ -6,10 +6,33 @@ const pool = require('../config/db'); // Pastikan ini ada
 
 // 1. Get Semua Data
 router.get('/', async (req, res, next) => {
-    try { 
-        const [rows] = await pool.query('SELECT * FROM daftar_sekolah'); 
-        res.json({ status: "success", data: rows });
-    } catch (error) {
+    try{
+        const{ cari } = req.query;
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+
+        const offset = (page - 1) * limit;
+        let result;
+
+        if(cari){
+            const keyword = `%${cari}%`;
+            [result] = await pool.query(
+                'SELECT * FROM daftar_sekolah WHERE nama LIKE ? OR lokasi LIKE ? LIMIT ? OFFSET ?',[keyword, keyword, limit, offset]);
+        } else {
+            [result] = await pool.query('SELECT *FROM daftar_sekolah LIMIT ? OFFSET ?',
+                [limit, offset]
+            );
+        }
+
+        res.json({
+            status: "success",
+            halaman_saat_ini : page,
+            batas_data : limit,
+            jumlah_data_ditemukan: result.length,
+            data: result
+        });
+    }catch (error){
         next(error);
     }
 });
