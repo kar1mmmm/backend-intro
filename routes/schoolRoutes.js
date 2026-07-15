@@ -28,6 +28,42 @@ router.post('/', async (req, res, next) => {
     }
 });
 
+router.delete('/:id', async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const [result] = await pool.query('DELETE FROM daftar_sekolah WHERE ID = ?', [id]);
+
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({status: "error", message: "Data tidak ditemukan"});
+        } 
+
+        res.json({ status: "success", message: `Data sekolah dengan ID ${id} berhasil dihapus`});
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.put('/:id', async (req, res, next) => {
+    try{
+        const id = req.params.id;
+        const {nama, lokasi } = req.body;
+
+        if (!nama || !lokasi){
+            return res.status(400).json({status: "error", message: "Nama dan lokasi wajib diisi untuk update"});
+        }
+
+        const [result] = await pool.query('UPDATE daftar_sekolah SET nama = ?, lokasi = ? WHERE id = ?',[nama, lokasi, id]);
+
+        if (result.affectedRows === 0){
+            return res.status(404).json({status: "error",  message: "Data tidak ditemukan"});
+        }
+            res.json({status: "success", message: `Data sekolah dengan ID ${id} berhasil diperbarui`});
+    } catch (error) {
+        next(error);
+    }
+});
+
 /* 
                     RUTE JSON LAMA DINONAKTIFKAN SEMENTARA
 
@@ -65,45 +101,9 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-router.delete('/:id', async (req, res, next) => {
-    try {
-        const id = req.params.id.toUpperCase();
-        const schoolData = await readData();
 
-        if (schoolData[id]) {
-            delete schoolData[id];
-            await fs.writeFile(filePath, JSON.stringify(schoolData, null, 4));
-            res.json({ status: "success", message: `Data ${id} berhasil dihapus` });
-        } else {
-            res.status(404).json({ status: "error", message: "Data tidak ditemukan" });
-        }
-    } catch (error) {
-        next(error);
-    }
-});
 
-router.put('/:id', async (req, res, next) => {
-    try{
-        const id = req.params.id.toUpperCase();
-        const {nama, lokasi } = req.body;
 
-        if (!nama || !lokasi){
-            return res.status(400).json({status: "error", message: "Nama dan lokasi wajib diisi untuk update"});
-        }
-
-        const schoolData = await readData();
-
-        if (schoolData[id]){
-            schoolData[id] = {nama, lokasi};
-            await fs.writeFile(filePath, JSON.stringify(schoolData, null, 4));
-            res.json({status: "success", message: `Data ${id} berhasil ditemukan`})
-        }else{
-            res.status(404).json({status: "error", message: "Data tidak ditemukan"});
-        }
-    } catch (error) {
-        next(error);
-    }
-});
 */
 
 module.exports = router;
