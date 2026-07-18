@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../config/db'); // Pastikan ini ada
+const pool = require('../config/db'); 
+
+const { validasiSekolah } = require('../middleware/validator');
 
 // --- RUTE AKTIF (SQL) ---
 
@@ -8,10 +10,8 @@ const pool = require('../config/db'); // Pastikan ini ada
 router.get('/', async (req, res, next) => {
     try{
         const{ cari } = req.query;
-
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5;
-
         const offset = (page - 1) * limit;
         let result;
 
@@ -20,7 +20,7 @@ router.get('/', async (req, res, next) => {
             [result] = await pool.query(
                 'SELECT * FROM daftar_sekolah WHERE nama LIKE ? OR lokasi LIKE ? LIMIT ? OFFSET ?',[keyword, keyword, limit, offset]);
         } else {
-            [result] = await pool.query('SELECT *FROM daftar_sekolah LIMIT ? OFFSET ?',
+            [result] = await pool.query('SELECT * FROM daftar_sekolah LIMIT ? OFFSET ?',
                 [limit, offset]
             );
         }
@@ -38,12 +38,9 @@ router.get('/', async (req, res, next) => {
 });
 
 // 2. Post Data Baru (SQL)
-router.post('/', async (req, res, next) => {
+router.post('/', validasiSekolah, async (req, res, next) => {
     try {
         const { nama, lokasi } = req.body;
-        if (!nama || !lokasi) {
-            return res.status(400).json({ status: "error", message: "Nama dan Lokasi wajib diisi" });
-        }
         const [result] = await pool.query('INSERT INTO daftar_sekolah (nama, lokasi) VALUES (?, ?)', [nama, lokasi]);
         res.status(201).json({ status: "success", message: "Data berhasil ditambahkan", id: result.insertId });
     } catch (error) {
@@ -51,6 +48,7 @@ router.post('/', async (req, res, next) => {
     }
 });
 
+// 3. Delete Data
 router.delete('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
@@ -67,14 +65,11 @@ router.delete('/:id', async (req, res, next) => {
     }
 });
 
-router.put('/:id', async (req, res, next) => {
+// 4. Update Data
+router.put('/:id', validasiSekolah, async (req, res, next) => {
     try{
         const id = req.params.id;
         const {nama, lokasi } = req.body;
-
-        if (!nama || !lokasi){
-            return res.status(400).json({status: "error", message: "Nama dan lokasi wajib diisi untuk update"});
-        }
 
         const [result] = await pool.query('UPDATE daftar_sekolah SET nama = ?, lokasi = ? WHERE id = ?',[nama, lokasi, id]);
 
@@ -87,46 +82,5 @@ router.put('/:id', async (req, res, next) => {
     }
 });
 
-/* 
-                    RUTE JSON LAMA DINONAKTIFKAN SEMENTARA
-
-router.get('/:jenjang', async (req, res, next) => {
-    try {
-        const jenjang = req.params.jenjang.toUpperCase();
-        const schoolData = await readData();
-
-        if (schoolData[jenjang]) {
-            res.json({ status: "success", data: schoolData[jenjang] });
-        } else {
-            res.status(404).json({ status: "error", message: "Jenjang tidak tersedia." });
-        }
-    } catch (error) {
-        next(error);
-    }
-});
-
-router.post('/', async (req, res, next) => {
-    try {
-        const { nama, lokasi } = req.body;
-
-        if (!nama || !lokasi) {
-            return res.status(400).json({ status: "error", message: "Nama dan Lokasi sekolah wajib di isi" });
-        }
-
-        const schoolData = await readData();
-        const newKey = `SEKOLAH_${Date.now()}`;
-        schoolData[newKey] = { nama, lokasi };
-        
-        await fs.writeFile(filePath, JSON.stringify(schoolData, null, 4));
-        res.status(201).json({ status: "Success", message: "Data sekolah berhasil ditambahkan" });
-    } catch (error) {
-        next(error);
-    }
-});
-
-
-
-
-*/
 
 module.exports = router;
