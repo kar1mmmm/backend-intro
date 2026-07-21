@@ -1,27 +1,39 @@
 # Backend Intro API
 
-*Simple backend project* yang di-develop menggunakan Node.js dan Express.js. *Project* ini di-build dengan *modular structure*, meng-apply prinsip DRY (*Don't Repeat Yourself*), serta men-support *basic* operasi CRUD menggunakan JSON sebagai *storage system*.
+Backend Intro API adalah project backend yang dibangun menggunakan Node.js dan Express.js. Project ini menerapkan struktur modular dan prinsip DRY untuk memastikan kode tetap rapi serta mudah dikelola dalam skala panjang.
+
+Pada versi terbaru ini, sistem penyimpanan data telah ditingkatkan dari penyimpanan JSON dasar menjadi database relasional menggunakan MySQL. Pembaruan ini memastikan integritas data yang lebih baik dan mendukung relasi antar tabel yang lebih kompleks.
+
+Selain itu, project ini sekarang dilengkapi dengan sistem autentikasi pengguna yang aman. Teknologi enkripsi password menggunakan bcrypt telah diintegrasikan untuk melindungi data kredensial pengguna dari potensi kebocoran.
 
 ## Key Features
-- **Modular Structure**: *Separation of concerns* antara *routes* dan *main logic* aplikasi biar *codebase* lebih rapi dan *maintainable*.
-- **RESTful API**: Men-support *basic* HTTP *operations* (GET, POST, DELETE) buat *data manipulation*.
-- **Middleware**: Dilengkapi dengan *logging system* untuk nge-track aktivitas *request* secara *real-time* langsung di terminal.
-- **Environment Security**: Menggunakan modul `dotenv` buat nge-protect *environment variables* dan konfigurasi sistem dari kebocoran data.
+
+Fitur utama dari project ini adalah struktur modular yang memisahkan antara routing dan logika utama aplikasi. Pemisahan ini dipadukan dengan dukungan RESTful API untuk operasi standar seperti GET, POST, dan DELETE pada manajemen data.
+
+Keamanan dan penanganan galat juga menjadi fokus utama dengan hadirnya Global Error Handler dan middleware logging. Sistem ini akan mencegat setiap error dari database atau validasi, lalu mengubahnya menjadi respons JSON yang rapi tanpa membuat server mati.
+
+Untuk urusan konfigurasi, aplikasi ini menggunakan modul dotenv untuk mengamankan variabel lingkungan. Koneksi ke database MySQL juga dikelola menggunakan sistem connection pool dari mysql2 agar performa query lebih stabil dan efisien.
 
 ## Prerequisites & Installation
-*Make sure* kamu udah nge-install Node.js di *local machine* kamu. Silakan *clone repository* ini menggunakan command `git clone https://github.com/kar1mmmm/backend-intro.git`, lalu masuk ke *project folder* dengan `cd backend-intro`.
 
-Setelah berada di dalam *root directory*, *run* command `npm install` buat men-download semua *dependencies* yang dibutuhin (seperti `express` dan `dotenv`).
+Pastikan kamu sudah menginstal Node.js dan sistem database MySQL seperti MariaDB di komputer lokalmu. Silakan clone repository ini menggunakan perintah git clone https://github.com/kar1mmmm/backend-intro.git melalui terminal, lalu masuk ke folder project dengan perintah cd backend-intro.
 
-*Next step*, bikin file baru bernama `.env` di *root directory* dan *copy-paste* format *key* dari file `.env.example` ke dalamnya.
+Setelah berada di dalam folder utama, jalankan perintah npm install untuk mengunduh semua dependensi yang dibutuhkan. Proses ini akan menginstal paket penting seperti express, dotenv, bcrypt, dan mysql2 secara otomatis ke dalam sistemmu.
+
+Langkah terakhir adalah membuat file baru bernama .env di folder utama dan menyalin format konfigurasi dari file .env.example. Jangan lupa untuk membuat database baru di MySQL dan menyesuaikan kredensial username serta password di dalam file .env tersebut.
 
 ## How to Run
-Untuk nge-start *server*, ketik command `node index.js` di terminal. Kalau *running well*, bakal muncul log di terminal yang ngasih tahu kalau *server* udah *up and running* di `http://localhost:3000`.
 
-Kamu bisa pakai *tools* API *client* kayak Thunder Client atau Postman buat nge-test berbagai *endpoints* yang *available* di bawah ini.
+Untuk mulai menyalakan server, kamu hanya perlu mengetikkan perintah node index.js di dalam terminal. Pastikan layanan database MySQL milikmu sudah dalam keadaan aktif sebelum menjalankan perintah ini agar koneksi pool bisa terbentuk.
+
+Jika semuanya berjalan lancar, terminal akan menampilkan pesan log yang mengonfirmasi bahwa server telah berhasil berjalan di alamat http://localhost:3000. Setiap aktivitas permintaan dari klien nantinya juga akan tercatat secara langsung di layar terminal ini.
+
+Kamu bisa menggunakan alat bantu API client seperti Thunder Client di VS Code atau Postman untuk menguji berbagai endpoint yang tersedia. Pastikan untuk selalu memeriksa kesesuaian format data JSON yang dikirimkan pada bagian request body agar lolos sistem validasi.
 
 ## API Endpoints
-- `GET /` : Nge-check *health status* dari *server*.
-- `GET /api/sekolah/:id` : *Fetch* spesifik data *based on unique ID*.
-- `POST /api/sekolah/` : *Create* data baru ke dalam sistem (*make sure* kirim *payload* datanya dalam format JSON lewat *request body*).
-- `DELETE /api/sekolah/:id` : Nge-delete data secara permanen *based on* ID.
+
+Aplikasi ini memiliki endpoint dasar yaitu GET / untuk memeriksa status kesehatan dari server. Selain itu, terdapat endpoint manajemen sekolah yang meliputi GET /api/sekolah/:id untuk mengambil data spesifik, POST /api/sekolah/ untuk menambah data baru, dan DELETE /api/sekolah/:id untuk menghapus data.
+
+Fitur terbaru yang ditambahkan adalah sistem autentikasi yang dapat diakses melalui endpoint POST /api/auth/register. Endpoint ini bertugas untuk mendaftarkan pengguna baru dengan menerima payload berupa username dan password, di mana sistem akan otomatis menolak pendaftaran jika terdapat duplikasi data.
+
+Semua respons dari endpoint tersebut telah distandardisasi menggunakan format JSON untuk memudahkan integrasi dengan sisi frontend. Jika terjadi kesalahan input atau gangguan server, sistem akan mengembalikan status kode HTTP yang sesuai beserta pesan error yang jelas.
